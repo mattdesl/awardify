@@ -1,0 +1,73 @@
+{
+  "name": "awardify",
+  "version": "1.0.0",
+  "description": "data viz of awwwards",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "name": "Matt DesLauriers",
+    "email": "dave.des@gmail.com"
+  },
+  "dependencies": {
+    "request": "~2.37.0",
+    "cheerio": "~0.17.0",
+    "async": "~0.9.0",
+    "url-join": "0.0.1",
+    "slug": "~0.5.0",
+    "domready": "~1.0.5",
+    "canvas-testbed": "~0.4.0",
+    "xtend": "~3.0.0",
+    "canvas-app": "~1.1.0",
+    "kami-texture": "~1.1.0",
+    "kami-batch": "~2.0.3",
+    "webgl-context": "~1.2.1",
+    "texture-region": "~1.0.0",
+    "number-util": "~1.0.3",
+    "kami-white-texture": "~1.0.2",
+    "get-pixels": "~1.1.0"
+  },
+  "devDependencies": {
+    "tape": "~2.13.2",
+    "browserify": "~4.2.1",
+    "browserify-shim": "~3.6.0"
+  },
+  "scripts": {
+    "test": "tape test.js",
+    "parse": "cd debug && nodemon parse.js --watch .",
+    "start": "beefy main.js --cwd debug --live"
+  },
+  "testling": {
+    "files": "test.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattdesl/awardify.git"
+  },
+  "homepage": "https://github.com/mattdesl/awardify",
+  "bugs": {
+    "url": "https://github.com/mattdesl/awardify/issues"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browser": {
+    "color-thief": "./debug/js/color-thief.js"
+  },
+  "browserify-shim": {
+    "color-thief": {
+      "exports": "ColorThief"
+    }
+  }
+}

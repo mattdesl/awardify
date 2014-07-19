@@ -1,0 +1,9 @@
+node_modules
+*.log
+.DS_Store
+bundle.js
+debug/data/sotd/images
+debug/data/sotm/images
+debug/data/winners/images
+debug/data/sotd/images_small
+debug/data/sotm/images_small

@@ -2,73 +2,81 @@ var async = require('async');
 var urlJoin = require('url-join');
 
 var testbed = require('canvas-testbed');
-var data = require('./data/sotd/data.json');
-var baseImagePath = 'data/sotd/images/';
 var xtend = require('xtend');
 
-var App = require('./lib/draw');
-	
-console.log("Total", data.length);
-data = data.slice(0, 50);
+var test = require('canvas-testbed');
 
+var colorUtils = require('./lib/palette-utils');
+var quantize = require('quantize');
+var color = require('./lib/color-style');
+var weightedPalette = require('./lib/get-palette');
 
+// var data = require('./data/sotd/data.json');
 
-function addImage(app, item, done) {
-	var img = new Image();
-	img.src = urlJoin( baseImagePath, item.image );
-	img.onload = function() {
-		var result = xtend({}, item);
-		app.addItem(result, img);
-		done();
-	};
-	img.onerror = function() {
-		done('could not find image');
-	};
-}
-
-require('domready')(function() {
-	var targetWidth = 64;
-
-	var app = App();
-	app.start();
-
-	document.body.style.margin = '0';
-	document.body.style.overflow = 'hidden';
-	document.body.appendChild(app.canvas);
-
-	async.eachLimit( data, 20, addImage.bind(this, app), function(err) {
-		if (err)
-			console.error(err);
-		console.log("All images added", app.data.length);
-	});
-
-
-	window.addEventListener('keydown', function(ev) {
-		var code = ev.which || ev.keyCode;
-		if (code === 32) {
-			app.stop();
-			console.log("Total count", app.data.length);
-			saveImage(app.canvas);
-		}
-	})
+test(render, setup, {
+	once: true
 });
 
+// var img = new Image();
+// img.onload = function() {
+// 	test(render, setup, {
 
+// 	})
+// }
+// img.src = 'data/sotd/images/' + data[Math.floor(Math.random()*data.length)].image;
 
-function saveImage(canvas) {
-	var dataURL = canvas.toDataURL("image/png");
+var palette;
 
-	var displayWidth = canvas.width,
-		displayHeight = canvas.height;
-	var imageWindow = window.open("", "fractalLineImage",
-                          "left=0,top=0,width="+800+",height="+500+",toolbar=0,resizable=0");
-	imageWindow.document.write("<title>Export Image</title>")
-	imageWindow.document.write("<img id='exportImage'"
-	                             + " alt=''"
-	                             + " height='" + displayHeight + "'"
-	                             + " width='"  + displayWidth  + "'"
-	                             + " style='position:absolute;left:0;top:0'/>");
-	imageWindow.document.close();
-	var exportImage = imageWindow.document.getElementById("exportImage");
-	exportImage.src = dataURL;
+var sharedCanvas, 
+	sharedContext;
+function getImagePixels(image, context) {
+	context = context || sharedContext;
+
+	if (!context) {
+		sharedCanvas = document.createElement("canvas");
+		sharedContext = sharedCanvas.getContext("2d");
+		context = sharedContext;
+	}
+
+	var cnv = context.canvas;
+	cnv.width = image.width;
+	cnv.height = image.height;
+
+	context.clearRect(0,0,cnv.width,cnv.height);
+	context.drawImage(image,0,0);
+	var data = context.getImageData(0,0,cnv.width,cnv.height);
+	return data.data;
 }
+
+function setup(context, width, height) {
+	// var pixels = getImagePixels(img)
+	// palette = weightedPalette(pixels, img.width, 6);
+}
+
+function render(context, width, height) {
+	context.clearRect(0, 0, width, height);
+
+	// context.drawImage(img, 0, 0);
+
+
+	context.save();
+	context.translate(30, 30);
+	
+
+	colorUtils.draw(context, width, height);
+	
+	// var total = img.width*img.height;
+
+	// var x = 0;
+	// for (var i=0; i<palette.length; i++) {
+	// 	var p = palette[i];
+	// 	context.fillStyle = color(p.color);
+	// 	var w = 10;
+	// 	var hPerc = p.amount;
+	// 	context.fillRect(x, 0, w, 50 * hPerc); 
+	// 	x += w;
+	// }
+
+	context.restore();
+}
+

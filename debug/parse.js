@@ -1,12 +1,11 @@
 var winners = require('./data/winners/data.json');
-var colors = require('./lib/colors');
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
 
 var list = [
 	{ name: 'sotd', data: require('./data/sotd/data.json') },
-	// { name: 'sotm', data: require('./data/sotm/data.json') }
+	{ name: 'sotm', data: require('./data/sotm/data.json') }
 ];
 
 
@@ -86,25 +85,6 @@ function frequencies(data) {
 	});
 };
 
-function parseColor(name, output, element, next) {
-	var img = path.join('data', name, 'images', element.image);
-	
-	colors(img, function(item, err, palette) {
-		if (err) {
-			console.error("Bad image path", path, err);
-			palette = [];
-		} 
-
-		output.push({ image: item.image, palette: palette });
-		next(err);
-	}.bind(this, element))
-}
-
-function writePalette(palettes, name) {
-	var f = path.join('data', name, 'palettes.json');
-
-	fs.writeFile(f, JSON.stringify(palettes, undefined, 2));
-}
 
 list.forEach(function(d) {
 	var name = d.name;
@@ -116,13 +96,6 @@ list.forEach(function(d) {
 	sortedData.sort(sortBy.bind(this, 'score'));
 	sortedData.slice(0, 5).forEach(print);
 	console.log();
-
-	// var paletteOutput = [];
-	// console.log("Getting palettes..")
-	// async.eachLimit(data, 20, parseColor.bind(this, name, paletteOutput), function(err) {
-	// 	console.log("Done parsing images.");
-	// 	writePalette(paletteOutput, name);
-	// })
 
 	console.log();
 

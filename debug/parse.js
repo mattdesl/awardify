@@ -2,6 +2,7 @@ var winners = require('./data/winners/data.json');
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
+var frequencies = require('./lib/frequency');
 
 var list = [
 	{ name: 'sotd', data: require('./data/sotd/data.json') },
@@ -62,28 +63,7 @@ function getAgencies(agencyList) {
 	return ret;
 }
 
-function frequencies(data) {
-	var dict = {};
 
-	//determine freq
-	data.forEach(function(d) {
-		if (d in dict)
-			dict[d]++;
-		else 
-			dict[d] = 1;
-	});
-
-	//make array
-	var sorted = [];
-	for (var k in dict) {
-		sorted.push({ value: k, frequency: dict[k] });
-	}
-
-	//sort & return
-	return sorted.sort(function(a, b) {
-		return b.frequency - a.frequency;
-	});
-};
 
 
 list.forEach(function(d) {

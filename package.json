@@ -33,10 +33,12 @@
     "canvas-pixels": "0.0.0"
   },
   "devDependencies": {
-    "tape": "~2.13.2",
     "browserify": "~4.2.1",
     "browserify-shim": "~3.6.0",
-    "lena": "~1.0.0"
+    "chalk": "^0.5.1",
+    "css": "^2.0.0",
+    "lena": "~1.0.0",
+    "tape": "~2.13.2"
   },
   "scripts": {
     "test": "tape test.js",

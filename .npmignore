@@ -1,3 +1,5 @@
+.scrape-cache.json
+.scrape-cache_copy.json
 node_modules
 *.log
 .DS_Store

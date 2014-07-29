@@ -147,7 +147,7 @@ request(cssURL, function(err, resp, body) {
 
         var fontName = '';
         var ttfURL = '';
-
+        
         r.declarations.forEach(function(d) {
             if (d.type === 'declaration') {
                 if (d.property ==='font-family') 

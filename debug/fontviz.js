@@ -27,9 +27,9 @@ function steinerPoints(glyph, N) {
 
 function tris(font, glyph) {
     var shapes = decompose(glyph).map(function(s) {
-        return s.simplify( font.units_per_EM * 0.15, s )
+        return s.simplify( font.units_per_EM * 0.06, s )
     })
-    var p = steinerPoints(glyph, 400);
+    var p = steinerPoints(glyph, 200);
     return triangulate( shapes, p )
 }
 

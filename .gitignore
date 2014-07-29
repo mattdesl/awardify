@@ -1,4 +1,5 @@
 .scrape-cache.json
+.scrape-cache_copy.json
 node_modules
 *.log
 .DS_Store
@@ -8,3 +9,6 @@ debug/data/sotm/images
 debug/data/winners/images
 debug/data/sotd/images_small
 debug/data/sotm/images_small
+debug/data/sotd/fonts
+debug/data/sotm/fonts
+.font-cache.json

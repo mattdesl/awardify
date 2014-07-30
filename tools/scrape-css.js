@@ -6,7 +6,7 @@ var path = require('path');
 var URL = require('url');
 var chalk = require('chalk');
 
-var sotd = require('./debug/data/sotd/data.json');
+var sotd = require('../debug/data/sotd/data.json');
 
 var CACHE_PATH = './.scrape-cache.json';
 var cache = getCache();

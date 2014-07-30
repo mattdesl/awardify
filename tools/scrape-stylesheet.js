@@ -8,12 +8,16 @@ var chalk = require('chalk');
 var querystring = require('querystring');
 
 var parseCSS = require('css').parse;
-var frequency = require('./debug/lib/frequency')
-var uniq = require('./debug/lib/uniq')
+var frequency = require('../debug/lib/frequency')
+var uniq = require('../debug/lib/uniq')
 
 var CACHE_PATH = './.scrape-cache.json';
 var cache = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8'));
 var CLEAN = process.argv[2] === '--clean';
+
+function putCache() {
+    fs.writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2));
+}
 
 function parseCSSFonts(item, cssText) {
     var sheet;
@@ -33,7 +37,7 @@ function parseCSSFonts(item, cssText) {
         item.fontFamilies = [];
 
     if (fntFaces.length > 0) {
-        console.log("Got some font-faces");
+        // console.log("Got some font-faces");
         fntFaces.forEach(function(f) {
             f.declarations.forEach(function(dec) {
                 if (dec.type === 'declaration' && dec.property === 'font-family') {
@@ -69,24 +73,38 @@ function parseCSSFonts(item, cssText) {
 
 
     item.fontFamilies = uniq(item.fontFamilies);
-    item.fontStyles = uniq(item.fontStyles);
+    // item.fontStyles = uniq(item.fontStyles);
 
-    console.log(item.url, item.fontFamilies, item.fontStyles)
+    if (item.fontFamilies.length>0)
+        console.log(item.url, item.fontFamilies);
 }
 
 module.exports = parseCSSFonts;
 
+var count = 0;
 
 function scrapeStyleSheet(item, url, done) {
+    if (count % 50 === 0)
+        putCache();
+    count++;
+
+    if (url.indexOf('http://fonts.googleapis.com/css')===0
+        || path.basename(url) === 'awwwards.css') {
+        if (done) done();
+        console.log(chalk.green("Skipping "+url));
+        return;
+    }
+
     if (item.checked && !CLEAN) {
-        done();
+        if (done) done();
+        console.log(chalk.green("Skipping "+url));
         return;
     }
 
     if (item.error) {
         item.checked = true
-        console.warn(chalk.yellow("Skipping " +item.url));
-        done();
+        console.warn(chalk.yellow("Skipping " +item.url, item.error));
+        if (done) done();
         return;
     }
 
@@ -95,7 +113,7 @@ function scrapeStyleSheet(item, url, done) {
             item.error = err.message
             item.checked = true
             console.error(chalk.red("Error with stylesheet: " +url, err.message));
-            done();
+            if (done) done();
             return;
         }
 
@@ -111,19 +129,16 @@ if (require.main === module) {
     var items = [];
     for (var i in cache) {
         var item = cache[i];
+        item.checked = false;
         items.push(item);
     }
 
-    
 
-    // async.eachSeries(items, function(item, done) {
-    //     async.eachLimit(item.styleSheets, 5, scrapeStyleSheet.bind(this, item), done);
-    // }, function() {
-    //     console.log("FINISHED ALL");
-    //     putCache();
-    // });
+    async.eachSeries(items, function(item, done) {
+        async.eachLimit(item.styleSheets, 5, scrapeStyleSheet.bind(this, item), done);
+    }, function() {
+        console.log("FINISHED ALL");
+        putCache();
+    });
 
-    function putCache() {
-        fs.writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2));
-    }
 }

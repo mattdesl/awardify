@@ -1,10 +1,10 @@
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
-var getImagePalette = require('./debug/lib/get-image-palette');
+var getImagePalette = require('../debug/lib/get-image-palette');
 
 var list = [
-	{ name: 'sotd', data: require('./debug/data/sotd/data.json') },
+	{ name: 'sotd', data: require('../debug/data/sotd/data.json') },
 	// { name: 'sotm', data: require('./debug/data/sotm/data.json') }
 ];
 
